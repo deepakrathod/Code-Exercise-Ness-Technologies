@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>vehicleTable CRUD</title>
+  <link rel="stylesheet"
+  	href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <script
+  	src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script
+  	src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  <style>
+    input[type='submit'], button, [aria-label]{
+      cursor: pointer;
+    }
+    .col-md-8.col-md-offset-2 {
+    border: 1px solid #999;
+    border-radius: 6px;
+    padding: 0;
+}
+    select#add-type {
+        padding: 4px;
+    }
+    .back{
+      /*background: #eee;*/
+      background: rgba(235,233,249,1);
+background: -moz-linear-gradient(top, rgba(235,233,249,1) 0%, rgba(216,208,239,1) 50%, rgba(206,199,236,1) 55%, rgba(193,191,234,1) 100%);
+background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(235,233,249,1)), color-stop(50%, rgba(216,208,239,1)), color-stop(55%, rgba(206,199,236,1)), color-stop(100%, rgba(193,191,234,1)));
+background: -webkit-linear-gradient(top, rgba(235,233,249,1) 0%, rgba(216,208,239,1) 50%, rgba(206,199,236,1) 55%, rgba(193,191,234,1) 100%);
+background: -o-linear-gradient(top, rgba(235,233,249,1) 0%, rgba(216,208,239,1) 50%, rgba(206,199,236,1) 55%, rgba(193,191,234,1) 100%);
+background: -ms-linear-gradient(top, rgba(235,233,249,1) 0%, rgba(216,208,239,1) 50%, rgba(206,199,236,1) 55%, rgba(193,191,234,1) 100%);
+background: linear-gradient(to bottom, rgba(235,233,249,1) 0%, rgba(216,208,239,1) 50%, rgba(206,199,236,1) 55%, rgba(193,191,234,1) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ebe9f9', endColorstr='#c1bfea', GradientType=0 );
+    }
+    input[type="submit"] {
+    background: #777;
+    color: #fff;
+    border-radius: 5px;
+}
+button{
+    background: #777;
+    color: #fff;
+    border-radius: 5px;
+}
+hr {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 0;
+    border-top: 1px solid #ccc;
+}
+.table {
+    width: 100%;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+}
+  </style>
+</head>
+<body>
+<br>
+<div class="container">
+<div class="col-md-8 col-md-offset-2">
+  <div class="col-md-12 back">
+<form action="javascript:void(0);" method="POST" onsubmit="app.Add()">
+
+  <div class="form-group">
+    <div class="col-md-4">
+  <label for="add-type">Type</label><br>
+<select id="add-type" >
+  <option value="">Select a type</option>
+  <option value="New">New</option>
+  <option value="Used">Used</option>
+  <option value="Certified">Certified</option>
+</select>
+</div>
+<!-- <div class="form-group"> -->
+<div class="col-md-4">
+  <label for="add-make">Make</label>
+  <input type="text" id="add-make" placeholder="Make" >
+  </div>
+  <!-- <div class="form-group"> -->
+  <div class="col-md-4">
+    <label for="add-model">Model</label>
+  <input type="text" id="add-model" placeholder="Model">
+  <input type="submit" value="+">
+</div>
+</div>
+</form>
+<div class="col-md-12"><hr/></div>
+
+
+<div class="col-md-4 col-md-offset-8 form-group"><br>
+<input type="text"  name="search" value="" onkeyup="app.search(this.value)" placeholder="Search">
+<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+</div>
+</div>
+<br><br>
+<table class="table">
+  <tr>
+    <th>Type</th>
+	<th>Make</th>
+	<th>Model</th>
+  </tr>
+    <tbody id="vehicleTable">
+    </tbody>
+</table>
+
+
+
+</div>
+<div class="col-md-6 col-md-offset-2">
+<br><br><button type="submit" onclick="app.jsondata()">JSON</button><br><br>
+<textarea rows="6" cols="100" id="json">
+
+</textarea>
+<br>
+</div>
+</div>
+<script>
+
+    <!-- Dynamically add to the table -->
+var app = new function() {
+  this.el = document.getElementById('vehicleTable');
+  this.vehicleTable = [];
+
+  this.FetchAll = function() {
+    var data = '',original=[];
+    if (this.vehicleTable.length > 0) {
+      for (i = 0; i < this.vehicleTable.length; i++) {
+        data += '<tr>';
+        data += '<td>' + this.vehicleTable[i].type + '</td>';
+		data += '<td>' + this.vehicleTable[i].make + '</td>';
+		data += '<td>' + this.vehicleTable[i].model + '</td>';
+        data += '</tr>';
+      }
+    }
+    return this.el.innerHTML = data;
+  };
+  <!-- Fetch data from the form -->
+  this.Add = function () {
+  var type,make,model;
+    type = document.getElementById('add-type');
+	make = document.getElementById('add-make');
+	model = document.getElementById('add-model');
+    // Get the value
+    var a = type.value;
+	var b = make.value;
+	var c = model.value;
+    if (a && b && c) {
+      // Add the new value
+      this.vehicleTable.push({'type':a.trim(),'make':b.trim(),'model':c.trim()});
+      // Reset input value
+      type.value = '';
+	  make.value = '';
+	  model.value = '';
+      // Dislay the new list
+	  original=this.vehicleTable;
+	  console.log("original",original);
+      this.FetchAll();
+    }
+  };
+  <!-- Convert Table data into JSON -->
+this.jsondata= function(){
+this.el1 = document.getElementById('json');
+var data1 = JSON.stringify(this.vehicleTable);
+return this.el1.innerHTML = data1;
+};
+<!-- Search Function -->
+this.search = function(val){
+console.log(original);
+var sdata=[];
+if(val.length>=3){
+    for (var i=0; i < original.length; i++) {
+        if (original[i].type.toLowerCase().indexOf(val.toLowerCase()) > -1 ||
+		original[i].make.toLowerCase().indexOf(val.toLowerCase()) > -1 ||
+		original[i].model.toLowerCase().indexOf(val.toLowerCase()) > -1)
+		{
+            sdata.push(original[i]);
+        }
+    }
+	if(sdata.length>=1){
+	this.vehicleTable = sdata;
+	}else{
+	this.vehicleTable = [];
+	}
+	this.FetchAll();
+}else{
+this.vehicleTable = original;
+this.FetchAll();
+}
+};
+}
+app.FetchAll();
+
+</script>
+</body>
+</html>
